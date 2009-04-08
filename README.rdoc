@@ -1,0 +1,7 @@
+= syscmd
+
+Description goes here.
+
+== Copyright
+
+Copyright (c) 2009 Till Salzer. See LICENSE for details.
