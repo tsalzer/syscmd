@@ -1,4 +1,5 @@
-require 'open3'
+#require 'open3'
+require 'open4'
 
 # Module.
 module Syscmd
@@ -13,6 +14,7 @@ module Syscmd
     attr_reader :stdout
     attr_reader :stderr
     attr_reader :exitcode
+    attr_reader :process_status
     
     # execute a system command.
     #  cmd: the command to execute
@@ -20,29 +22,49 @@ module Syscmd
     def initialize(cmd, *args)
       @cmd = cmd
       @args = *args
+      @process_status = nil
       @executed = false
     end
     
+    # execute the command.
     def exec!
-      stdout = Array.new
-      stderr = Array.new
-      Open3.popen3(self.cmdline) do |stdin, stdout, stderr|
-        stdout = stdout.read
-        stderr = stderr.read
-      end
-      @stdout = stdout
-      @stderr = stderr
+#      sout = Array.new
+#      serr = Array.new
+#      Open4::open4(self.cmdline) do |stdin, stdout, stderr, status|
+#        sout = stdout #.read
+#        serr = stderr #.read
+#        @process_status = status
+#      end
+#      @stdout = sout
+#      @stderr = serr
+      
+      cid, pwrite, pread, perr = Open4::popen4(self.cmdline)
+#      @process_status = $?
+      @stdout = pread.read
+      @stderr = perr.read
+      @process_status = cid
       
       @executed = true
       self
     end
     
+    def exitcode
+      if @process_status
+        #@process_status.exitstatus
+        @process_status
+      else
+        nil
+      end
+    end
+    
+    # build the command line for this command.
+    # Once the command line is created, it will be cached.
     def cmdline
       if @cmdline.nil?
         cmdline = "#{@cmd}"
         if @args
           @args.each do |arg|
-            if arg.index(" ")
+            if arg.to_s.index(" ")
               cmdline << " \"#{arg}\""
             else
               cmdline << " #{arg}"
@@ -54,9 +76,11 @@ module Syscmd
       @cmdline
     end
     
-    def executed?
+    # check if the command was executed.
+    def executed
       return @exitcode.nil? ? false : true
     end
+    alias executed? executed
   end
   
   # execute a system command.

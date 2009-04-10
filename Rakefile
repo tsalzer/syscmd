@@ -9,6 +9,7 @@ begin
     gem.email = "till.salzer@googlemail.com"
     gem.homepage = "http://github.com/tsalzer/syscmd"
     gem.authors = ["Till Salzer"]
+    gem.add_dependency('open4', >= 0.9.6)
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

@@ -52,3 +52,18 @@ describe Syscmd::Command, ".exec! for -s 'Hello World'" do
     end
   end
 end
+
+describe Syscmd::Command, ".exec! for -x 1" do
+  #subject { Syscmd::Command.new(TESTER, '-x', 1) }
+  
+  (-2..2).each do |st|
+    it "should return exit code #{st} for -x #{st}" do
+      pending "exit code still not working" do
+        cmd = Syscmd::Command.new(TESTER, '-x', st)
+        cmd.cmdline.should == "#{TESTER} -x #{st}"
+        cmd.exec!
+        cmd.exitcode.should == st
+      end
+    end
+  end
+end
