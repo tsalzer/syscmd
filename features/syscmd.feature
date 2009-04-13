@@ -1,7 +1,7 @@
 Feature: execute a command
   In order to execute a command
   As a Syscmd::Command object
-  I want instantiate a Syscmd::Command object execute it
+  I want a Syscmd::Command object instantiate and executed
 
 Scenario: get no output
   Given no arguments

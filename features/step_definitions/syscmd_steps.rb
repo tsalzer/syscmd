@@ -52,7 +52,7 @@ Then /^stderr nil$/ do
 end
 
 Then /^exitcode (\d+)$/ do |exitcode|
-  pending "exit code not yet implemented" do
+#  pending "exit code not yet implemented" do
     @cmd.exitcode.should == exitcode.to_i
-  end
+#  end
 end

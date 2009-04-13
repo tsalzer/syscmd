@@ -1,0 +1,56 @@
+require File.join(File.dirname(__FILE__), 'spec_helper')
+
+describe Syscmd::Command, ".exec! for -s 'Hello World'" do
+  subject { Syscmd::Command.new(TESTER, '-s', 'Hello World') }
+  
+  it "should have stdout 'Hello World'" do
+    subject.exec!.stdout.should == 'Hello World'
+  end
+  
+  it "should have stderr \"\"" do
+    subject.exec!.stderr.should == ""
+  end
+  
+  it "should have exitcode 0" do
+    subject.exec!.exitcode.should == 0
+  end
+end
+
+describe Syscmd::Command, ".exec! for positive exit codes" do
+  [1, 2, 254, 255].each do |st|
+    it "should return exit code #{st} for -x #{st}" do
+#      pending "exit code still not working" do
+        cmd = Syscmd::Command.new(TESTER, '-x', st)
+        cmd.cmdline.should == "#{TESTER} -x #{st}"
+        cmd.exec!
+        cmd.exitcode.should == st
+#      end
+    end
+  end
+end
+
+describe Syscmd::Command, ".exec! for hugh positive exit codes" do
+  [256, 257, 512, 4000].each do |st|
+    it "should return exit code #{st % 256} for -x #{st}" do
+#      pending "exit code still not working" do
+        cmd = Syscmd::Command.new(TESTER, '-x', st)
+        cmd.cmdline.should == "#{TESTER} -x #{st}"
+        cmd.exec!
+        cmd.exitcode.should == st % 256
+#      end
+    end
+  end
+end
+
+describe Syscmd::Command, ".exec! for negative exit codes" do
+  [-1, -2, -255, -256].each do |st|
+    it "should return exit code #{st % 256} for -x #{st}" do
+#      pending "exit code still not working" do
+        cmd = Syscmd::Command.new(TESTER, '-x', st)
+        cmd.cmdline.should == "#{TESTER} -x #{st}"
+        cmd.exec!
+        cmd.exitcode.should == st % 256
+#      end
+    end
+  end
+end

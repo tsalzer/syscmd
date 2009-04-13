@@ -1,5 +1,4 @@
-#require 'open3'
-require 'open4'
+require 'syscmd/popen'
 
 # Module.
 module Syscmd
@@ -28,30 +27,17 @@ module Syscmd
     
     # execute the command.
     def exec!
-#      sout = Array.new
-#      serr = Array.new
-#      Open4::open4(self.cmdline) do |stdin, stdout, stderr, status|
-#        sout = stdout #.read
-#        serr = stderr #.read
-#        @process_status = status
-#      end
-#      @stdout = sout
-#      @stderr = serr
-      
-      cid, pwrite, pread, perr = Open4::popen4(self.cmdline)
-#      @process_status = $?
+#      @process_status, pwrite, pread, perr = Syscmd::popen(self.cmdline)
+      @process_status, pread, perr = Syscmd::popen(self.cmdline)
       @stdout = pread.read
       @stderr = perr.read
-      @process_status = cid
-      
-      @executed = true
       self
     end
     
     def exitcode
       if @process_status
-        #@process_status.exitstatus
-        @process_status
+        #@process_status
+        @process_status.exitstatus
       else
         nil
       end
@@ -78,15 +64,15 @@ module Syscmd
     
     # check if the command was executed.
     def executed
-      return @exitcode.nil? ? false : true
+      @process_status.nil? ? false : true
     end
     alias executed? executed
   end
   
   # execute a system command.
-  #  cmd: the command to execute
-  #  args: command line arguments
-  #  returns: executed Syscmd::Command object
+  # cmd::     the command to execute
+  # args::    command line arguments
+  # returns:: executed Syscmd::Command object
   def self.exec!(cmd, *args)
     cmd = Command.new(cmd, args)
     cmd.exec!

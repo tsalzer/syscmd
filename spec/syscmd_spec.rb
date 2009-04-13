@@ -14,9 +14,7 @@ describe Syscmd, ".execute" do
   
   it "should return an executed Syscmd::Command object" do
     cmd = subject.exec!(TESTER)
-    pending "exit code is still not implemented" do
-      cmd.executed?.should == true
-    end
+    cmd.executed?.should == true
   end
   
 end
