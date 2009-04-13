@@ -2,17 +2,33 @@ require 'syscmd/popen'
 
 # Module.
 module Syscmd
+  # Error raise if a command object is executed twice.
+  class AlreadyExecutedError < RuntimeError ; end
+  
+  # A command to execute.
+  # You usually just use Syscmd::exec! to create and execute the command.
+  # A command object can be executed only once.
   class Command
-    # execution state
+    # +true+ if the command was already executed, otherwise +false+.
     attr_reader :executed
     
+    # the command to execute.
     attr_reader :cmd
+    # array of arguments.
     attr_reader :args
+    # the constructed command line.
     attr_reader :cmdline
     
+    # standard output of the executed command.
     attr_reader :stdout
+    # standard error of the executed command.
     attr_reader :stderr
+    # exit code of the executed command.
+    # Note that the exit code is just a Byte value ranged 0..255 on
+    # Unix platforms, so don't expect any negative values or values greated
+    # than 255 here.
     attr_reader :exitcode
+    # exit status of the executed command.
     attr_reader :process_status
     
     # execute a system command.
@@ -26,21 +42,19 @@ module Syscmd
     end
     
     # execute the command.
+    # raises AlreadyExecutedError if the command is already executed.
     def exec!
-#      @process_status, pwrite, pread, perr = Syscmd::popen(self.cmdline)
+      raise AlreadyExecutedError.new("already executed with status #{process_status}") if self.executed?
       @process_status, pread, perr = Syscmd::popen(self.cmdline)
       @stdout = pread.read
       @stderr = perr.read
       self
     end
     
+    # the exitcode of the executed command.
+    # returns nil 
     def exitcode
-      if @process_status
-        #@process_status
-        @process_status.exitstatus
-      else
-        nil
-      end
+      @process_status ? @process_status.exitstatus : nil
     end
     
     # build the command line for this command.
@@ -48,15 +62,9 @@ module Syscmd
     def cmdline
       if @cmdline.nil?
         cmdline = "#{@cmd}"
-        if @args
-          @args.each do |arg|
-            if arg.to_s.index(" ")
-              cmdline << " \"#{arg}\""
-            else
-              cmdline << " #{arg}"
-            end
-          end
-        end
+        @args.each do |arg|
+          cmdline << (arg.to_s.index(" ") ? " \"#{arg}\"" : " #{arg}")
+        end if @args
         @cmdline = cmdline
       end
       @cmdline
@@ -73,8 +81,9 @@ module Syscmd
   # cmd::     the command to execute
   # args::    command line arguments
   # returns:: executed Syscmd::Command object
-  def self.exec!(cmd, *args)
+  def exec!(cmd, *args)
     cmd = Command.new(cmd, args)
     cmd.exec!
   end
+  module_function :'exec!'
 end

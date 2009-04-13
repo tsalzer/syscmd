@@ -1,6 +1,26 @@
 = syscmd
 
-Description goes here.
+A simple wrapper to execute system commands, which provides stdout, stderr and
+exit code.
+
+== Usage
+
+ require 'syscmd'
+ cmd = Syscmd.exec!('command')  # => Syscmd::Command object
+ 
+ cmd.stdout                     # => String
+ cmd.stderr                     # => String
+ cmd.exitcode                   # => Integer
+
+Note that <code>Syscmd.exec!</code> immediately executes the given command.
+You will get the Syscmd::Command object executed and can examine it.
+
+
+== Heritage/Acknoledgement
+
+The <code>Syscmd::popen</code> code is mostly taken from the original Ruby 1.8
+implementation of Open3::open3.
+
 
 == Copyright
 
