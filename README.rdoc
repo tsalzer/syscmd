@@ -19,7 +19,7 @@ You will get the Syscmd::Command object executed and can examine it.
 == Heritage/Acknoledgement
 
 The <code>Syscmd::popen</code> code is mostly taken from the original Ruby 1.8
-implementation of Open3::open3.
+implementation of Open3::open3 (author: Yukihiro Matsumoto: documentation: Konrad Meyer).
 
 
 == Copyright

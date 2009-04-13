@@ -1,8 +1,14 @@
 module Syscmd
-  # Taken from the original Open3::open3 and slightly tweaked to return an exit status.
+  # Taken from the original Ruby 1.8 implementation of Open3::open3 and slightly
+  # tweaked to return an exit status.
+  # This function is meant as in internal method of the Syscmd module; do not use
+  # it on it's own, as the interface may change anytime.
   #
   # cmd::       the command to execute
   # returns::   status, stdout, stderr
+  #
+  # orignal author::        Yukihiro Matsumoto
+  # orignal socumentation:: Konrad Meyer
   def popen(*cmd)
     pw = IO::pipe   # pipe[0] for read, pipe[1] for write
     pr = IO::pipe
