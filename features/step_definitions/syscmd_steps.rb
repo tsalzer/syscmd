@@ -27,6 +27,7 @@ When /^I execute (.+)$/ do |cmd|
 end
 
 Then /^I should get stdout "(.*)"$/ do |stdout|
+  stdout.sub!(/\\n/, "\n")
   @cmd.stdout.should == stdout
 end
 
@@ -36,6 +37,7 @@ end
 
 
 Then /^stdout "(.*)"$/ do |stdout|
+  stdout.sub!(/\\n/, "\n")
   @cmd.stdout.should == stdout
 end
 
@@ -44,10 +46,12 @@ Then /^stdout nil$/ do
 end
 
 Then /^stderr "(.*)"$/ do |stderr|
+  stderr.sub!(/\\n/, "\n")
   @cmd.stderr.should == stderr
 end
 
 Then /^stderr nil$/ do
+  stderr.sub!(/\\n/, "\n")
   @cmd.stderr.should == nil
 end
 

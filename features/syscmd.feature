@@ -11,32 +11,32 @@ Scenario: get no output
   And exitcode 0
 
 
-Scenario: get "Hello World"
+Scenario: get "Hello World\n"
   Given argument -s "Hello World"
   When I execute ./spec/tester.rb
-  Then I should get stdout "Hello World"
+  Then I should get stdout "Hello World\n"
   And stderr ""
   And exitcode 0
 
-Scenario: get "Bye Bye World" as stderr
+Scenario: get "Bye Bye World\n" as stderr
   Given argument -e "Bye Bye World"
   When I execute ./spec/tester.rb
   Then I should get stdout ""
-  And stderr "Bye Bye World"
+  And stderr "Bye Bye World\n"
   And exitcode 0
 
-Scenario: get "Hello World" and exit code 1
+Scenario: get "Hello World\n" and exit code 1
   Given argument -s "Hello World"
   And argument -x 1
   When I execute ./spec/tester.rb
-  Then I should get stdout "Hello World"
+  Then I should get stdout "Hello World\n"
   And stderr ""
   And exitcode 1
 
-Scenario: get "Hello World" as stdout and "Bye Bye" as stderr
+Scenario: get "Hello World" as stdout and "Bye Bye\n" as stderr
   Given argument -s "Hello World"
   And argument -e "Bye Bye"
   When I execute ./spec/tester.rb
-  Then I should get stdout "Hello World"
-  And stderr "Bye Bye"
+  Then I should get stdout "Hello World\n"
+  And stderr "Bye Bye\n"
   And exitcode 0
