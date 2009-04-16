@@ -19,6 +19,6 @@ end
 task :default => :spec
 
 desc "run all tests (RSpec with coverage, Cucumber)"
-task :alltests => [:rcov, :features]
+task :test => [:rcov, :features]
 
 Dir["#{File.dirname(__FILE__)}/tasks/*.rake"].sort.each { |ext| load ext }
