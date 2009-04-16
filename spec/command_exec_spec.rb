@@ -1,29 +1,42 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe Syscmd::Command, ".exec! for -s 'Hello World'" do
-  subject { Syscmd::Command.new(TESTER, '-s', 'Hello World') }
+  subject { Syscmd::Command.new(TESTER, '-s', 'Hello World').exec! }
   
   it "should have stdout 'Hello World\\n'" do
-    subject.exec!.stdout.should == "Hello World\n"
+    subject.stdout.should == "Hello World\n"
+  end
+  it "should have stdout_lines ['Hello World']" do
+    subject.stdout_lines.should == ["Hello World"]
   end
   
+  
   it "should have stderr \"\"" do
-    subject.exec!.stderr.should == ""
+    subject.stderr.should == ""
   end
   
   it "should have exitcode 0" do
-    subject.exec!.exitcode.should == 0
+    subject.exitcode.should == 0
   end
 end
 
 describe Syscmd::Command, ".exec! for multiline output" do
-  it "should have stdout 'Hello World\\nHello World\\n' for two lines" do
-    cmd = Syscmd::Command.new(TESTER, '-s', 'Hello World', '-S', 2)
-    cmd.exec!.stdout.should == "Hello World\nHello World\n"
+  subject { Syscmd::Command.new(TESTER, 
+    '-s', 'Hello World', '-S', 2,
+    '-e', 'Bye Bye World', '-E', 2).exec! }
+  
+  it "should have stdout 'Hello World\\nHello World\\n'" do
+    subject.stdout.should == "Hello World\nHello World\n"
   end
-  it "should have stderr 'Bye Bye World\\nBye Bye World\\n' for two lines" do
-    cmd = Syscmd::Command.new(TESTER, '-e', 'Bye Bye World', '-E', 2)
-    cmd.exec!.stderr.should == "Bye Bye World\nBye Bye World\n"
+  it "should have two strings in stdout_lines" do
+    subject.stdout_lines.should == ["Hello World", "Hello World"]
+  end
+  
+  it "should have stderr 'Bye Bye World\\nBye Bye World\\n'" do
+    subject.stderr.should == "Bye Bye World\nBye Bye World\n"
+  end
+  it "should have two strings in stdout_lines" do
+    subject.stderr_lines.should == ["Bye Bye World", "Bye Bye World"]
   end
 end
 

@@ -51,6 +51,26 @@ module Syscmd
       self
     end
     
+    # get the stdout as lines.
+    def stdout_lines
+      if @stdout_lines.nil?
+        stdout = self.stdout
+        return nil unless stdout
+        @stdout_lines = stdout.split(/\n/)
+      end
+      @stdout_lines
+    end
+    
+    # get the stdout as lines.
+    def stderr_lines
+      if @stderr_lines.nil?
+        stderr = self.stderr
+        return nil unless stderr
+        @stderr_lines = stderr.split(/\n/)
+      end
+      @stderr_lines
+    end
+    
     # the exitcode of the executed command.
     # returns nil 
     def exitcode
