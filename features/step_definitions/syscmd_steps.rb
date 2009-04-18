@@ -1,58 +1,23 @@
-Given /^no arguments$/ do
-  @args = nil
-end
-
-Given /argument (\-[a-zA-Z]) "([^\"]*)"$/ do |arg1, arg2|
-  if @args
-    @args << arg1
-    @args << arg2
-  else
-    @args = [arg1, arg2]
-  end
-end
-
-Given /argument (\-[a-zA-Z]) (\d+)$/ do |arg1, arg2|
-  if @args
-    @args << arg1
-    @args << arg2
-  else
-    @args = [arg1, arg2]
-  end
-end
-
-
 When /^I execute (.+)$/ do |cmd|
   @cmd = Syscmd::Command.new(cmd, @args)
   @cmd.exec!
 end
 
-Then /^I should get stdout "(.*)"$/ do |stdout|
-  stdout.sub!(/\\n/, "\n")
-  @cmd.stdout.should == stdout
+Then /^(I should get )?(stdout|stderr) "(.*)"$/ do |ignore, channel, expected|
+  expected.sub!(/\\n/, "\n")
+  @cmd.send(channel).should == expected
 end
 
-Then /^I should get stdout nil$/ do
-  @cmd.stdout.should == nil
+Then /^(I should get )?(stdout|stderr) nil$/ do |ignore,channel|
+  @cmd.send(channel).should == nil
 end
 
-
-Then /^stdout "(.*)"$/ do |stdout|
-  stdout.sub!(/\\n/, "\n")
-  @cmd.stdout.should == stdout
-end
-
-Then /^stdout nil$/ do
-  @cmd.stdout.should == nil
-end
-
-Then /^stderr "(.*)"$/ do |stderr|
-  stderr.sub!(/\\n/, "\n")
-  @cmd.stderr.should == stderr
-end
-
-Then /^stderr nil$/ do
-  stderr.sub!(/\\n/, "\n")
-  @cmd.stderr.should == nil
+Then /^(I should get )?(stdout|stderr)_lines (\[.*\])$/ do |ignore, channel, expected_lines|
+  splitted = expected_lines[1,expected_lines.length-2].split(/[,]/)
+  lines = splitted.collect do |s|
+    /"(.*)"/.match(s)[1]
+  end
+  @cmd.send("#{channel}_lines").should == lines
 end
 
 Then /^exitcode (\d+)$/ do |exitcode|
